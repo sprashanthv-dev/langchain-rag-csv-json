@@ -1,0 +1,6 @@
+# jq
+langchain
+langchain-community
+chromadb
+pytest
+pandas
