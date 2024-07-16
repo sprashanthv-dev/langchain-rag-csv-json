@@ -1,8 +1,10 @@
 import pandas as pd
 import os
 
-CHUNK_SIZE = 100  # Process 100 rows at a time
-MAX_RECORDS = 10000  # Total number of extracted records
+from utils import get_excluded_cols
+
+CHUNK_SIZE = 5  # Process 5 rows at a time
+MAX_RECORDS = 25  # Total number of extracted records
 
 DESCRIPTION_TEXT_TO_REMOVE = "[!@@Additional Info@@!]"
 
@@ -44,12 +46,10 @@ def extract_records(source: str, cols_list: list[str]):
 def main():
     # src - csv file to be used, dest - preprocessed csv file
     src = "data/used_cars_data.csv"
-    dest = "data/used_cars_extracted.csv"
+    dest = "data/extracted/used_cars_extracted.csv"
 
     # Columns to exclude
-    excluded_cols = ["main_picture_url", "salvage", "savings_amount", "theft_title",
-                     "trimId", "vehicle_damage_category", "cabin", "isCab", "is_certified",
-                     "is_cpo", "is_oemcpo", "dealer_zip"]
+    excluded_cols = get_excluded_cols()
 
     if os.path.exists(dest):
         os.remove(dest)

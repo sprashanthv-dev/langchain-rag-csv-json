@@ -163,3 +163,4 @@ cython_debug/
 
 # 10 GB file so ignoring it from getting pushed to repo
 data/
+chroma/
