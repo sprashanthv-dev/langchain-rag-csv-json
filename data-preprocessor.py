@@ -84,7 +84,7 @@ def main():
 
     # Save the constructed sentences as a PDF document
     pdf = PDFHelper()
-    pdf.add_chapter("Vehicle Specifications Information: ", text)
+    pdf.add_chapter(text)
 
     pdf.output(dest_pdf)
     print(f"Successfully saved {len(result)} records to {dest_pdf}")
