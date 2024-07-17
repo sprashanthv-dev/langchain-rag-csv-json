@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 
-from utils import get_excluded_cols
+from col_helpers import get_excluded_cols, construct_sentence
 
 CHUNK_SIZE = 5  # Process 5 rows at a time
 MAX_RECORDS = 25  # Total number of extracted records
@@ -43,6 +43,20 @@ def extract_records(source: str, cols_list: list[str]):
     return result
 
 
+def construct_sentences(df: pd.DataFrame):
+
+    sentences = []
+    text = ""
+
+    for index, row in df.iterrows():
+        sentence = construct_sentence(index, row)
+        sentences.append(sentence)
+
+    text = text + "\n".join(sentences)
+
+    return text
+
+
 def main():
     # src - csv file to be used, dest - preprocessed csv file
     src = "data/used_cars_data.csv"
@@ -60,6 +74,8 @@ def main():
     result.to_csv(dest, index=False)
 
     print(f"Successfully saved {len(result)} records to {dest}")
+
+    sentences = construct_sentences(result)
 
 
 if __name__ == "__main__":
