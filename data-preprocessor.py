@@ -2,9 +2,15 @@ import pandas as pd
 import os
 
 from col_helpers import get_excluded_cols, construct_sentence
+from pdf_helper import PDFHelper
 
-CHUNK_SIZE = 5  # Process 5 rows at a time
-MAX_RECORDS = 25  # Total number of extracted records
+CHUNK_SIZE = 10  # Process 5 rows at a time
+MAX_RECORDS = 100  # Total number of extracted records
+
+# src - csv file to be used, dest - preprocessed csv file
+src_csv = "data/used_cars_data.csv"
+dest_csv = "data/extracted/used_cars_extracted.csv"
+dest_pdf = "data/extracted/used_cars_extracted.pdf"
 
 DESCRIPTION_TEXT_TO_REMOVE = "[!@@Additional Info@@!]"
 
@@ -52,30 +58,36 @@ def construct_sentences(df: pd.DataFrame):
         sentence = construct_sentence(index, row)
         sentences.append(sentence)
 
-    text = text + "\n".join(sentences)
+    text = text + "\n\n".join(sentences)
 
     return text
 
 
 def main():
-    # src - csv file to be used, dest - preprocessed csv file
-    src = "data/used_cars_data.csv"
-    dest = "data/extracted/used_cars_extracted.csv"
-
     # Columns to exclude
     excluded_cols = get_excluded_cols()
 
-    if os.path.exists(dest):
-        os.remove(dest)
+    if os.path.exists(dest_csv):
+        os.remove(dest_csv)
 
-    result = extract_records(src, excluded_cols)
+    if os.path.exists(dest_pdf):
+        os.remove(dest_pdf)
+
+    result = extract_records(src_csv, excluded_cols)
 
     # Save the dataframe as csv
-    result.to_csv(dest, index=False)
+    result.to_csv(dest_csv, index=False)
 
-    print(f"Successfully saved {len(result)} records to {dest}")
+    print(f"Successfully saved {len(result)} records to {dest_csv}")
 
-    sentences = construct_sentences(result)
+    text = construct_sentences(result)
+
+    # Save the constructed sentences as a PDF document
+    pdf = PDFHelper()
+    pdf.add_chapter("Vehicle Specifications Information: ", text)
+
+    pdf.output(dest_pdf)
+    print(f"Successfully saved {len(result)} records to {dest_pdf}")
 
 
 if __name__ == "__main__":
