@@ -1,18 +1,24 @@
 import os
+import openai
 import shutil
 
 from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_community.document_loaders.csv_loader import CSVLoader
 from langchain_community.vectorstores import Chroma
 
+from langchain_openai import OpenAIEmbeddings
 from langchain.schema import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
-from embeddings import get_embedding_fn
+from dotenv import load_dotenv
+
 
 CSV_FILE_PATH = "./data/extracted/used_cars_extracted.csv"
-PDF_DIR_PATH = "./data/extracted"
+PDF_DIR_PATH = "./data/pdf"
 CHROMA_DB_PATH = "./chroma"
+
+load_dotenv()
+openai.api_key = os.environ['OPENAI_API_KEY']
 
 
 def load_docs(is_pdf: bool):
@@ -69,7 +75,7 @@ def save_to_chroma(chunks: list[Document]):
 
     db = Chroma.from_documents(
         chunks,
-        get_embedding_fn(),
+        OpenAIEmbeddings(),
         persist_directory=CHROMA_DB_PATH
     )
 
@@ -80,7 +86,7 @@ def save_to_chroma(chunks: list[Document]):
 def add_to_chroma(chunks: list[Document]):
     db = Chroma(
         persist_directory=CHROMA_DB_PATH,
-        embedding_function=get_embedding_fn())
+        embedding_function=OpenAIEmbeddings())
 
     updated_chunks = calculate_chunk_ids(chunks)
 

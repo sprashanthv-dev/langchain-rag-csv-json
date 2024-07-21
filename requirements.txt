@@ -1,8 +1,12 @@
 # jq
+python-dotenv
 langchain
 langchain-community
+langchain-openai
 chromadb
 pytest
 pandas
 fpdf
 pypdf
+openai
+tiktoken
